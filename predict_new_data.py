@@ -3,7 +3,7 @@ import sys
 
 # ======== PLEASE MODIFY ========
 # where is the repo
-repoRoot = r'.'
+repoRoot = r'./MaskFlownet'
 # to CUDA\vX.Y\bin
 #os.environ['PATH'] = r'path\to\your\NVIDIA GPU Computing Toolkit\CUDA\v9.0\bin' + ';' + os.environ['PATH']
 
@@ -67,9 +67,9 @@ def load_model(config_str):
 def instantiate_model(gpu_device, config):
     ctx = [mx.cpu()] if gpu_device == '' else [mx.gpu(gpu_id) for gpu_id in map(int, gpu_device.split(','))]
     # initiate
-    pipe = get_pipeline(args.network, ctx=ctx, config=config)
+    pipe = get_pipeline('MaskFlownet', ctx=ctx, config=config)
     return pipe
-    
+
 
 def load_checkpoint(pipe, config, checkpoint):
     # load parameters from given checkpoint
