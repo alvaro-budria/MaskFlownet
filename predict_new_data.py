@@ -43,7 +43,7 @@ def find_checkpoint(checkpoint_str):
                 sys.stdout.flush()
                 raise StopIteration
         steps = int(steps)
-        if args.clear_steps or True:
+        if True:
             steps = 0
         else:
             _, exp_info = path.read_log(log_file)
