@@ -26,41 +26,41 @@ def find_checkpoint(checkpoint_str):
     # find checkpoint
     steps = 0
     if checkpoint_str is not None:
-    	if ':' in checkpoint_str:
-    		prefix, steps = checkpoint_str.split(':')
-    	else:
-    		prefix = checkpoint_str
-    		steps = None
-    	log_file, run_id = path.find_log(prefix)	
-    	if steps is None:
-    		checkpoint, steps = path.find_checkpoints(run_id)[-1]
-    	else:
-    		checkpoints = path.find_checkpoints(run_id)
-    		try:
-    			checkpoint, steps = next(filter(lambda t : t[1] == steps, checkpoints))
-    		except StopIteration:
-    			print('The steps not found in checkpoints', steps, checkpoints)
-    			sys.stdout.flush()
-    			raise StopIteration
-    	steps = int(steps)
-    	if args.clear_steps:
-    		steps = 0
-    	else:
-    		_, exp_info = path.read_log(log_file)
-    		exp_info = exp_info[-1]
-    		for k in args.__dict__:
-    			if k in exp_info and k in ('tag',):
-    				setattr(args, k, eval(exp_info[k]))
-    				print('{}={}, '.format(k, exp_info[k]), end='')
-    		print()
-    	sys.stdout.flush()
+        if ':' in checkpoint_str:
+            prefix, steps = checkpoint_str.split(':')
+        else:
+            prefix = checkpoint_str
+            steps = None
+        log_file, run_id = path.find_log(prefix)    
+        if steps is None:
+            checkpoint, steps = path.find_checkpoints(run_id)[-1]
+        else:
+            checkpoints = path.find_checkpoints(run_id)
+            try:
+                checkpoint, steps = next(filter(lambda t : t[1] == steps, checkpoints))
+            except StopIteration:
+                print('The steps not found in checkpoints', steps, checkpoints)
+                sys.stdout.flush()
+                raise StopIteration
+        steps = int(steps)
+        if args.clear_steps:
+            steps = 0
+        else:
+            _, exp_info = path.read_log(log_file)
+            exp_info = exp_info[-1]
+            for k in args.__dict__:
+                if k in exp_info and k in ('tag',):
+                    setattr(args, k, eval(exp_info[k]))
+                    print('{}={}, '.format(k, exp_info[k]), end='')
+            print()
+        sys.stdout.flush()
     return checkpoint, steps
 
 
 def load_model(config_str):
     # load network configuration
     with open(os.path.join(repoRoot, 'network', 'config', config_str)) as f:
-    	config =  network.config.Reader(yaml.load(f))
+        config =  network.config.Reader(yaml.load(f))
     return config
 
 
@@ -79,8 +79,8 @@ def load_checkpoint(pipe, config, checkpoint):
     print('load the weight for the network')
     pipe.load(checkpoint)
     if network_class == 'MaskFlownet':
-   		print('fix the weight for the head network')
-   		pipe.fix_head()
+           print('fix the weight for the head network')
+           pipe.fix_head()
     sys.stdout.flush()
     return pipe
 
@@ -142,8 +142,8 @@ if __name__ == "__main__":
     parser.add_argument('--video_filepath', type=str, help='filepath of the input video')
     parser.add_argument('-g', '--gpu_device', type=str, default='', help='Specify gpu device(s)')
     parser.add_argument('-c', '--checkpoint', type=str, default=None, 
-    	help='model checkpoint to load; by default, the latest one.'
-    	'You can use checkpoint:steps to load to a specific steps')
+        help='model checkpoint to load; by default, the latest one.'
+        'You can use checkpoint:steps to load to a specific steps')
     parser.add_argument('--clear_steps', action='store_true')
     parser.add_argument('-n', '--network', type=str, default='MaskFlownet', help='The choice of network')
     parser.add_argument('--batch', type=int, default=8, help='minibatch size of samples per device')
