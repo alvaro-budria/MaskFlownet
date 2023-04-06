@@ -118,6 +118,19 @@ def predict_video_flow(video_filename, batch_size, resize=None):
     return flow_video, fps
 
 
+def flow_maskflownet(
+    frame_prev, frame_next, checkpoint=None, config='?', gpu_device='', flow_filepath='./flow_maskflownet.png',
+    ):
+    checkpoint, steps = find_checkpoint(checkpoint)
+    config = load_model(config)
+    pipe = instantiate_model(gpu_device, config)
+    pipe = load_checkpoint(pipe, config, checkpoint)
+
+    flow, occ_mask, warped = predict_image_pair_flow(frame_prev, frame_next, pipe)
+    cv2.imwrite(flow_filepath, flow_vis.flow_to_color(flow, convert_to_bgr=False))
+
+    return flow, (occ_mask, warped)
+
 
 if __name__ == "__main__":
 
@@ -136,18 +149,18 @@ if __name__ == "__main__":
     parser.add_argument('--batch', type=int, default=8, help='minibatch size of samples per device')
     parser.add_argument('--resize', type=str, default='', help='shape to resize image frames before inference')
     parser.add_argument('--threads', type=str, default=8, help='Number of threads to use when writing flow video to file')
-    
+
     args = parser.parse_args()
-    
-    
+
+
     # Get desired image resize from the string argument
     infer_resize = [int(s) for s in args.resize.split(',')] if args.resize else None
-    
+
     checkpoint, steps = find_checkpoint(args.checkpoint)
     config = load_model(args.config)
     pipe = instantiate_model(args.gpu_device, config)
     pipe = load_checkpoint(pipe, config, checkpoint)
-    
+
     if args.image_1 is not None:
         image_1 = cv2.imread(args.image_1)
         image_2 = cv2.imread(args.image_2)
