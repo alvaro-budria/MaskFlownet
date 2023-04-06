@@ -119,7 +119,12 @@ def predict_video_flow(video_filename, batch_size, resize=None):
 
 
 def flow_maskflownet(
-    frame_prev, frame_next, checkpoint=None, config='?', gpu_device='', flow_filepath='./flow_maskflownet.png',
+    frame_prev,
+    frame_next,
+    checkpoint='8caNov12',
+    config='MaskFlownet.yaml',
+    gpu_device='0',
+    flow_filepath='./flow_maskflownet.png',
     ):
     checkpoint, steps = find_checkpoint(checkpoint)
     config = load_model(config)
